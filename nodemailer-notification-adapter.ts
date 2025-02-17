@@ -32,7 +32,7 @@ export class NodemailerNotificationAdapter<
     public templateRenderer: TemplateRenderer,
     public backend: Backend,
     public readonly enqueueNotifications: boolean,
-    transportOptions: nodemailer.SendMailOptions,
+    transportOptions: Parameters<typeof nodemailer.createTransport>[0],
   ) {
     this.transporter = nodemailer.createTransport(transportOptions);
   }
