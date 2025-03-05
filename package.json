@@ -1,18 +1,23 @@
 {
   "name": "vintasend-nodemailer",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
   },
-  "author": "",
-  "license": "ISC",
+  "files": [
+    "dist"
+  ],
+  "author": "Hugo Bessa",
+  "license": "MIT",
   "dependencies": {
     "nodemailer": "^6.10.0",
     "vintasend": "^0.1.4"
   },
   "devDependencies": {
-    "@types/nodemailer": "^6.4.17"
+    "@types/nodemailer": "^6.4.17",
+    "typescript": "^5.8.2"
   }
 }
