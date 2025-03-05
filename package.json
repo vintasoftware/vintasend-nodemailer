@@ -14,7 +14,7 @@
   "license": "MIT",
   "dependencies": {
     "nodemailer": "^6.10.0",
-    "vintasend": "^0.1.4"
+    "vintasend": "^0.1.6"
   },
   "devDependencies": {
     "@types/nodemailer": "^6.4.17",
