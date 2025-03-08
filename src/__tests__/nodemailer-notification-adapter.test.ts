@@ -66,7 +66,6 @@ describe('NodemailerNotificationAdapter', () => {
   it('should initialize with correct properties', () => {
     const adapter = new NodemailerNotificationAdapter(
       mockTemplateRenderer,
-      mockBackend,
       false,
       {
         host: 'smtp.example.com',
@@ -96,7 +95,6 @@ describe('NodemailerNotificationAdapter', () => {
   it('should send email successfully', async () => {
     const adapter = new NodemailerNotificationAdapter(
       mockTemplateRenderer,
-      mockBackend,
       false,
       {
         host: 'smtp.example.com',
@@ -108,7 +106,7 @@ describe('NodemailerNotificationAdapter', () => {
         },
       } as SMTPTransport.Options
     );
-
+    adapter.injectBackend(mockBackend);
 
     const context = { foo: 'bar' };
     const renderedTemplate = {
@@ -134,7 +132,6 @@ describe('NodemailerNotificationAdapter', () => {
   it('should throw error if notification ID is missing', async () => {
     const adapter = new NodemailerNotificationAdapter(
       mockTemplateRenderer,
-      mockBackend,
       false,
       {
         host: 'smtp.example.com',
@@ -146,6 +143,8 @@ describe('NodemailerNotificationAdapter', () => {
         },
       } as SMTPTransport.Options
     );
+    adapter.injectBackend(mockBackend);
+
     mockNotification.id = undefined;
 
     await expect(adapter.send(mockNotification, {})).rejects.toThrow('Notification ID is required');
@@ -154,7 +153,6 @@ describe('NodemailerNotificationAdapter', () => {
   it('should throw error if user email is not found', async () => {
     const adapter = new NodemailerNotificationAdapter(
       mockTemplateRenderer,
-      mockBackend,
       false,
       {
         host: 'smtp.example.com',
@@ -166,6 +164,7 @@ describe('NodemailerNotificationAdapter', () => {
         },
       } as SMTPTransport.Options
     );
+    adapter.injectBackend(mockBackend);
 
 
     mockTemplateRenderer.render.mockResolvedValue({
