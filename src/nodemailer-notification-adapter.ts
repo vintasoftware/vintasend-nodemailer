@@ -2,22 +2,17 @@ import nodemailer from 'nodemailer';
 
 import { BaseNotificationAdapter } from 'vintasend/dist/services/notification-adapters/base-notification-adapter';
 import type { BaseEmailTemplateRenderer } from 'vintasend/dist/services/notification-template-renderers/base-email-template-renderer';
-import type { Notification } from 'vintasend/dist/types/notification';
+import type { DatabaseNotification } from 'vintasend/dist/types/notification';
 import type { JsonObject } from 'vintasend/dist/types/json-values';
-import type { ContextGenerator } from 'vintasend/dist/services/notification-context-registry';
-import type { Identifier } from 'vintasend/dist/types/identifier';
+import type{ BaseNotificationTypeConfig } from 'vintasend/dist/types/notification-type-config';
 
 export class NodemailerNotificationAdapter<
-  TemplateRenderer extends BaseEmailTemplateRenderer<AvailableContexts>,
-  AvailableContexts extends Record<string, ContextGenerator>,
-  NotificationIdType extends Identifier = Identifier,
-  UserIdType extends Identifier = Identifier,
+  TemplateRenderer extends BaseEmailTemplateRenderer<Config>,
+  Config extends BaseNotificationTypeConfig,
 > extends
     BaseNotificationAdapter<
       TemplateRenderer,
-      AvailableContexts,
-      NotificationIdType,
-      UserIdType
+      Config
     >
 {
   public key: string | null = 'nodemailer';
@@ -33,7 +28,7 @@ export class NodemailerNotificationAdapter<
   }
 
   async send(
-    notification: Notification<AvailableContexts, NotificationIdType, UserIdType>,
+    notification: DatabaseNotification<Config>,
     context: JsonObject,
   ): Promise<void> {
     if (!this.backend) {

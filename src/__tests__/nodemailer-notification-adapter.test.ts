@@ -15,10 +15,10 @@ describe('NodemailerNotificationAdapter', () => {
   const mockTemplateRenderer = {
     render: jest.fn(),
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  } as jest.Mocked<BaseEmailTemplateRenderer<Record<string, any>>>;
+  } as jest.Mocked<BaseEmailTemplateRenderer<any>>;
 
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  const mockBackend: jest.Mocked<BaseNotificationBackend<any, any, any>> = {
+  const mockBackend: jest.Mocked<BaseNotificationBackend<any>> = {
     persistNotification: jest.fn(),
     persistNotificationUpdate: jest.fn(),
     getAllFutureNotifications: jest.fn(),
@@ -39,7 +39,7 @@ describe('NodemailerNotificationAdapter', () => {
   };
 
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
-  let mockNotification: DatabaseNotification<any, any, any>;
+  let mockNotification: DatabaseNotification<any>;
 
   beforeEach(() => {
     jest.clearAllMocks();
