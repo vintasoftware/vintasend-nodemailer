@@ -1,5 +1,5 @@
 import nodemailer from 'nodemailer';
-import { NodemailerNotificationAdapter } from '../index';
+import { NodemailerNotificationAdapter, NodemailerNotificationAdapterFactory } from '../index';
 import type { BaseEmailTemplateRenderer } from 'vintasend/dist/services/notification-template-renderers/base-email-template-renderer';
 import type { BaseNotificationBackend } from 'vintasend/dist/services/notification-backends/base-notification-backend';
 import type { DatabaseNotification } from 'vintasend/dist/types/notification';
@@ -28,11 +28,11 @@ describe('NodemailerNotificationAdapter', () => {
     getAllPendingNotifications: jest.fn(),
     getPendingNotifications: jest.fn(),
     getNotification: jest.fn(),
-    markSentAsRead: jest.fn(),
+    markAsRead: jest.fn(),
     filterAllInAppUnreadNotifications: jest.fn(),
     cancelNotification: jest.fn(),
-    markPendingAsSent: jest.fn(),
-    markPendingAsFailed: jest.fn(),
+    markAsSent: jest.fn(),
+    markAsFailed: jest.fn(),
     storeContextUsed: jest.fn(),
     getUserEmailFromNotification: jest.fn(),
     filterInAppUnreadNotifications: jest.fn(),
@@ -64,7 +64,7 @@ describe('NodemailerNotificationAdapter', () => {
   });
 
   it('should initialize with correct properties', () => {
-    const adapter = new NodemailerNotificationAdapter(
+    const adapter = new NodemailerNotificationAdapterFactory().create(
       mockTemplateRenderer,
       false,
       {
@@ -93,7 +93,7 @@ describe('NodemailerNotificationAdapter', () => {
   });
 
   it('should send email successfully', async () => {
-    const adapter = new NodemailerNotificationAdapter(
+    const adapter = new NodemailerNotificationAdapterFactory().create(
       mockTemplateRenderer,
       false,
       {
@@ -130,7 +130,7 @@ describe('NodemailerNotificationAdapter', () => {
   });
 
   it('should throw error if notification ID is missing', async () => {
-    const adapter = new NodemailerNotificationAdapter(
+    const adapter = new NodemailerNotificationAdapterFactory().create(
       mockTemplateRenderer,
       false,
       {
@@ -150,8 +150,28 @@ describe('NodemailerNotificationAdapter', () => {
     await expect(adapter.send(mockNotification, {})).rejects.toThrow('Notification ID is required');
   });
 
+  it('should throw error if backend not injected', async () => {
+    const adapter = new NodemailerNotificationAdapterFactory().create(
+      mockTemplateRenderer,
+      false,
+      {
+        host: 'smtp.example.com',
+        port: 587,
+        secure: false, // true for port 465, false for other ports
+        auth: {
+          user: 'username',
+          pass: 'password',
+        },
+      } as SMTPTransport.Options
+    );
+
+    mockNotification.id = '123';
+
+    await expect(adapter.send(mockNotification, {})).rejects.toThrow('Backend not injected');
+  });
+
   it('should throw error if user email is not found', async () => {
-    const adapter = new NodemailerNotificationAdapter(
+    const adapter = new NodemailerNotificationAdapterFactory().create(
       mockTemplateRenderer,
       false,
       {
