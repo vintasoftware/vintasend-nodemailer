@@ -2,19 +2,14 @@ import nodemailer from 'nodemailer';
 
 import { BaseNotificationAdapter } from 'vintasend/dist/services/notification-adapters/base-notification-adapter';
 import type { BaseEmailTemplateRenderer } from 'vintasend/dist/services/notification-template-renderers/base-email-template-renderer';
-import type { AnyDatabaseNotification } from 'vintasend/dist/types/notification';
 import type { JsonObject } from 'vintasend/dist/types/json-values';
-import type{ BaseNotificationTypeConfig } from 'vintasend/dist/types/notification-type-config';
+import type { AnyDatabaseNotification } from 'vintasend/dist/types/notification';
+import type { BaseNotificationTypeConfig } from 'vintasend/dist/types/notification-type-config';
 
 export class NodemailerNotificationAdapter<
   TemplateRenderer extends BaseEmailTemplateRenderer<Config>,
   Config extends BaseNotificationTypeConfig,
-> extends
-    BaseNotificationAdapter<
-      TemplateRenderer,
-      Config
-    >
-{
+> extends BaseNotificationAdapter<TemplateRenderer, Config> {
   public key: string | null = 'nodemailer';
   private transporter: nodemailer.Transporter;
 
@@ -27,10 +22,7 @@ export class NodemailerNotificationAdapter<
     this.transporter = nodemailer.createTransport(transportOptions);
   }
 
-  async send(
-    notification: AnyDatabaseNotification<Config>,
-    context: JsonObject,
-  ): Promise<void> {
+  async send(notification: AnyDatabaseNotification<Config>, context: JsonObject): Promise<void> {
     if (!this.backend) {
       throw new Error('Backend not injected');
     }
@@ -60,6 +52,10 @@ export class NodemailerNotificationAdapterFactory<Config extends BaseNotificatio
     enqueueNotifications: boolean,
     transportOptions: Parameters<typeof nodemailer.createTransport>[0],
   ) {
-    return new NodemailerNotificationAdapter<TemplateRenderer, Config>(templateRenderer, enqueueNotifications, transportOptions);
+    return new NodemailerNotificationAdapter<TemplateRenderer, Config>(
+      templateRenderer,
+      enqueueNotifications,
+      transportOptions,
+    );
   }
 }

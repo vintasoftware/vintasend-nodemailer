@@ -1,10 +1,13 @@
 import nodemailer from 'nodemailer';
+import type SMTPTransport from 'nodemailer/lib/smtp-transport';
+import type { BaseNotificationBackend } from 'vintasend/dist/services/notification-backends/base-notification-backend';
+import type { BaseEmailTemplateRenderer } from 'vintasend/dist/services/notification-template-renderers/base-email-template-renderer';
+import type {
+  DatabaseNotification,
+  DatabaseOneOffNotification,
+} from 'vintasend/dist/types/notification';
 import type { NodemailerNotificationAdapter } from '../index';
 import { NodemailerNotificationAdapterFactory } from '../index';
-import type { BaseEmailTemplateRenderer } from 'vintasend/dist/services/notification-template-renderers/base-email-template-renderer';
-import type { BaseNotificationBackend } from 'vintasend/dist/services/notification-backends/base-notification-backend';
-import type { DatabaseOneOffNotification, DatabaseNotification } from 'vintasend/dist/types/notification';
-import type SMTPTransport from 'nodemailer/lib/smtp-transport';
 
 jest.mock('nodemailer');
 
@@ -15,7 +18,7 @@ describe('NodemailerNotificationAdapter - One-Off Notifications', () => {
 
   const mockTemplateRenderer = {
     render: jest.fn(),
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
   } as jest.Mocked<BaseEmailTemplateRenderer<any>>;
 
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -59,7 +62,11 @@ describe('NodemailerNotificationAdapter - One-Off Notifications', () => {
     (nodemailer.createTransport as jest.Mock).mockReturnValue(mockTransporter);
 
     // Reset the sendMail mock to resolve successfully by default
-    mockTransporter.sendMail.mockResolvedValue({ accepted: ['test@example.com'], rejected: [], response: 'OK' });
+    mockTransporter.sendMail.mockResolvedValue({
+      accepted: ['test@example.com'],
+      rejected: [],
+      response: 'OK',
+    });
 
     mockOneOffNotification = {
       id: '123',
@@ -99,19 +106,15 @@ describe('NodemailerNotificationAdapter - One-Off Notifications', () => {
       sendAfter: new Date(),
     };
 
-    adapter = new NodemailerNotificationAdapterFactory().create(
-      mockTemplateRenderer,
-      false,
-      {
-        host: 'smtp.example.com',
-        port: 587,
-        secure: false,
-        auth: {
-          user: 'username',
-          pass: 'password',
-        },
-      } as SMTPTransport.Options
-    );
+    adapter = new NodemailerNotificationAdapterFactory().create(mockTemplateRenderer, false, {
+      host: 'smtp.example.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: 'username',
+        pass: 'password',
+      },
+    } as SMTPTransport.Options);
 
     adapter.injectBackend(mockBackend);
   });
@@ -165,17 +168,21 @@ describe('NodemailerNotificationAdapter - One-Off Notifications', () => {
       const error = new Error('SMTP connection failed');
       mockTransporter.sendMail.mockRejectedValue(error);
 
-      await expect(adapter.send(mockOneOffNotification, {})).rejects.toThrow('SMTP connection failed');
+      await expect(adapter.send(mockOneOffNotification, {})).rejects.toThrow(
+        'SMTP connection failed',
+      );
     });
 
     it('should throw error if notification ID is missing for one-off notification', async () => {
       const notificationWithoutId = {
         ...mockOneOffNotification,
         id: null,
-      // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
       } as any;
 
-      await expect(adapter.send(notificationWithoutId, {})).rejects.toThrow('Notification ID is required');
+      await expect(adapter.send(notificationWithoutId, {})).rejects.toThrow(
+        'Notification ID is required',
+      );
     });
   });
 
@@ -208,7 +215,7 @@ describe('NodemailerNotificationAdapter - One-Off Notifications', () => {
       mockBackend.getUserEmailFromNotification.mockResolvedValue(undefined);
 
       await expect(adapter.send(mockRegularNotification, {})).rejects.toThrow(
-        'User email not found for notification 456'
+        'User email not found for notification 456',
       );
     });
   });
@@ -260,11 +267,11 @@ describe('NodemailerNotificationAdapter - One-Off Notifications', () => {
             user: 'username',
             pass: 'password',
           },
-        } as SMTPTransport.Options
+        } as SMTPTransport.Options,
       );
 
       await expect(adapterWithoutBackend.send(mockOneOffNotification, {})).rejects.toThrow(
-        'Backend not injected'
+        'Backend not injected',
       );
     });
 
