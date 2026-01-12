@@ -36,6 +36,14 @@ describe('NodemailerNotificationAdapter', () => {
     storeContextUsed: jest.fn(),
     getUserEmailFromNotification: jest.fn(),
     filterInAppUnreadNotifications: jest.fn(),
+    bulkPersistNotifications: jest.fn(),
+    getAllNotifications: jest.fn(),
+    getNotifications: jest.fn(),
+    persistOneOffNotification: jest.fn(),
+    persistOneOffNotificationUpdate: jest.fn(),
+    getOneOffNotification: jest.fn(),
+    getAllOneOffNotifications: jest.fn(),
+    getOneOffNotifications: jest.fn(),
   };
 
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
