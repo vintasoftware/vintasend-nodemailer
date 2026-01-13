@@ -3,11 +3,12 @@ import type SMTPTransport from 'nodemailer/lib/smtp-transport';
 import type { BaseNotificationBackend } from 'vintasend/dist/services/notification-backends/base-notification-backend';
 import type { BaseEmailTemplateRenderer } from 'vintasend/dist/services/notification-template-renderers/base-email-template-renderer';
 import type { DatabaseNotification } from 'vintasend/dist/types/notification';
+import type { StoredAttachment, AttachmentFile } from 'vintasend/dist/types/attachment';
 import { NodemailerNotificationAdapter, NodemailerNotificationAdapterFactory } from '../index';
 
 jest.mock('nodemailer');
 
-describe('NodemailerNotificationAdapter', () => {
+describe('NodemailerNotificationAdapter - Attachments', () => {
   const mockTransporter = {
     sendMail: jest.fn(),
   };
@@ -77,42 +78,54 @@ describe('NodemailerNotificationAdapter', () => {
     };
   });
 
-  it('should initialize with correct properties', () => {
+  it('should report that it supports attachments', () => {
     const adapter = new NodemailerNotificationAdapterFactory().create(mockTemplateRenderer, false, {
       host: 'smtp.example.com',
       port: 587,
-      secure: false, // true for port 465, false for other ports
+      secure: false,
       auth: {
         user: 'username',
         pass: 'password',
       },
     } as SMTPTransport.Options);
 
-    expect(adapter.notificationType).toBe('EMAIL');
-    expect(adapter.key).toBe('nodemailer');
-    expect(adapter.enqueueNotifications).toBe(false);
-    expect(nodemailer.createTransport).toHaveBeenCalledWith({
-      host: 'smtp.example.com',
-      port: 587,
-      secure: false, // true for port 465, false for other ports
-      auth: {
-        user: 'username',
-        pass: 'password',
-      },
-    } as SMTPTransport.Options);
+    expect(adapter.supportsAttachments).toBe(true);
   });
 
-  it('should send email successfully', async () => {
+  it('should send email with single attachment', async () => {
     const adapter = new NodemailerNotificationAdapterFactory().create(mockTemplateRenderer, false, {
       host: 'smtp.example.com',
       port: 587,
-      secure: false, // true for port 465, false for other ports
+      secure: false,
       auth: {
         user: 'username',
         pass: 'password',
       },
     } as SMTPTransport.Options);
     adapter.injectBackend(mockBackend);
+
+    const fileBuffer = Buffer.from('test file content');
+    const mockFile: AttachmentFile = {
+      read: jest.fn().mockResolvedValue(fileBuffer),
+      stream: jest.fn(),
+      url: jest.fn(),
+      delete: jest.fn(),
+    };
+
+    const attachment: StoredAttachment = {
+      id: 'att-1',
+      fileId: 'file-1',
+      filename: 'test.pdf',
+      contentType: 'application/pdf',
+      size: fileBuffer.length,
+      checksum: 'abc123',
+      description: 'Test file',
+      file: mockFile,
+      createdAt: new Date(),
+      storageMetadata: {},
+    };
+
+    mockNotification.attachments = [attachment];
 
     const context = { foo: 'bar' };
     const renderedTemplate = {
@@ -126,8 +139,137 @@ describe('NodemailerNotificationAdapter', () => {
 
     await adapter.send(mockNotification, context);
 
-    expect(mockTemplateRenderer.render).toHaveBeenCalledWith(mockNotification, context);
-    expect(mockBackend.getUserEmailFromNotification).toHaveBeenCalledWith('123');
+    expect(mockFile.read).toHaveBeenCalled();
+    expect(mockTransporter.sendMail).toHaveBeenCalledWith({
+      to: userEmail,
+      subject: renderedTemplate.subject,
+      html: renderedTemplate.body,
+      attachments: [
+        {
+          filename: 'test.pdf',
+          content: fileBuffer,
+          contentType: 'application/pdf',
+        },
+      ],
+    });
+  });
+
+  it('should send email with multiple attachments', async () => {
+    const adapter = new NodemailerNotificationAdapterFactory().create(mockTemplateRenderer, false, {
+      host: 'smtp.example.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: 'username',
+        pass: 'password',
+      },
+    } as SMTPTransport.Options);
+    adapter.injectBackend(mockBackend);
+
+    const fileBuffer1 = Buffer.from('file 1 content');
+    const fileBuffer2 = Buffer.from('file 2 content');
+
+    const mockFile1: AttachmentFile = {
+      read: jest.fn().mockResolvedValue(fileBuffer1),
+      stream: jest.fn(),
+      url: jest.fn(),
+      delete: jest.fn(),
+    };
+
+    const mockFile2: AttachmentFile = {
+      read: jest.fn().mockResolvedValue(fileBuffer2),
+      stream: jest.fn(),
+      url: jest.fn(),
+      delete: jest.fn(),
+    };
+
+    const attachment1: StoredAttachment = {
+      id: 'att-1',
+      fileId: 'file-1',
+      filename: 'document.pdf',
+      contentType: 'application/pdf',
+      size: fileBuffer1.length,
+      checksum: 'abc123',
+      description: 'PDF document',
+      file: mockFile1,
+      createdAt: new Date(),
+      storageMetadata: {},
+    };
+
+    const attachment2: StoredAttachment = {
+      id: 'att-2',
+      fileId: 'file-2',
+      filename: 'image.png',
+      contentType: 'image/png',
+      size: fileBuffer2.length,
+      checksum: 'def456',
+      description: 'Image file',
+      file: mockFile2,
+      createdAt: new Date(),
+      storageMetadata: {},
+    };
+
+    mockNotification.attachments = [attachment1, attachment2];
+
+    const context = { foo: 'bar' };
+    const renderedTemplate = {
+      subject: 'Test Subject',
+      body: '<p>Test Body</p>',
+    };
+    const userEmail = 'user@example.com';
+
+    mockTemplateRenderer.render.mockResolvedValue(renderedTemplate);
+    mockBackend.getUserEmailFromNotification.mockResolvedValue(userEmail);
+
+    await adapter.send(mockNotification, context);
+
+    expect(mockFile1.read).toHaveBeenCalled();
+    expect(mockFile2.read).toHaveBeenCalled();
+    expect(mockTransporter.sendMail).toHaveBeenCalledWith({
+      to: userEmail,
+      subject: renderedTemplate.subject,
+      html: renderedTemplate.body,
+      attachments: [
+        {
+          filename: 'document.pdf',
+          content: fileBuffer1,
+          contentType: 'application/pdf',
+        },
+        {
+          filename: 'image.png',
+          content: fileBuffer2,
+          contentType: 'image/png',
+        },
+      ],
+    });
+  });
+
+  it('should send email without attachments when attachments array is empty', async () => {
+    const adapter = new NodemailerNotificationAdapterFactory().create(mockTemplateRenderer, false, {
+      host: 'smtp.example.com',
+      port: 587,
+      secure: false,
+      auth: {
+        user: 'username',
+        pass: 'password',
+      },
+    } as SMTPTransport.Options);
+    adapter.injectBackend(mockBackend);
+
+    mockNotification.attachments = [];
+
+    const context = { foo: 'bar' };
+    const renderedTemplate = {
+      subject: 'Test Subject',
+      body: '<p>Test Body</p>',
+    };
+    const userEmail = 'user@example.com';
+
+    mockTemplateRenderer.render.mockResolvedValue(renderedTemplate);
+    mockBackend.getUserEmailFromNotification.mockResolvedValue(userEmail);
+
+    await adapter.send(mockNotification, context);
+
     expect(mockTransporter.sendMail).toHaveBeenCalledWith({
       to: userEmail,
       subject: renderedTemplate.subject,
@@ -135,11 +277,11 @@ describe('NodemailerNotificationAdapter', () => {
     });
   });
 
-  it('should throw error if notification ID is missing', async () => {
+  it('should send email without attachments when attachments is undefined', async () => {
     const adapter = new NodemailerNotificationAdapterFactory().create(mockTemplateRenderer, false, {
       host: 'smtp.example.com',
       port: 587,
-      secure: false, // true for port 465, false for other ports
+      secure: false,
       auth: {
         user: 'username',
         pass: 'password',
@@ -147,45 +289,24 @@ describe('NodemailerNotificationAdapter', () => {
     } as SMTPTransport.Options);
     adapter.injectBackend(mockBackend);
 
-    mockNotification.id = undefined;
+    mockNotification.attachments = undefined;
 
-    await expect(adapter.send(mockNotification, {})).rejects.toThrow('Notification ID is required');
-  });
-
-  it('should throw error if backend not injected', async () => {
-    const adapter = new NodemailerNotificationAdapterFactory().create(mockTemplateRenderer, false, {
-      host: 'smtp.example.com',
-      port: 587,
-      secure: false, // true for port 465, false for other ports
-      auth: {
-        user: 'username',
-        pass: 'password',
-      },
-    } as SMTPTransport.Options);
-
-    mockNotification.id = '123';
-
-    await expect(adapter.send(mockNotification, {})).rejects.toThrow('Backend not injected');
-  });
-
-  it('should throw error if user email is not found', async () => {
-    const adapter = new NodemailerNotificationAdapterFactory().create(mockTemplateRenderer, false, {
-      host: 'smtp.example.com',
-      port: 587,
-      secure: false, // true for port 465, false for other ports
-      auth: {
-        user: 'username',
-        pass: 'password',
-      },
-    } as SMTPTransport.Options);
-    adapter.injectBackend(mockBackend);
-
-    mockTemplateRenderer.render.mockResolvedValue({
+    const context = { foo: 'bar' };
+    const renderedTemplate = {
       subject: 'Test Subject',
       body: '<p>Test Body</p>',
-    });
-    mockBackend.getUserEmailFromNotification.mockResolvedValue(undefined);
+    };
+    const userEmail = 'user@example.com';
 
-    await expect(adapter.send(mockNotification, {})).rejects.toThrow('User email not found');
+    mockTemplateRenderer.render.mockResolvedValue(renderedTemplate);
+    mockBackend.getUserEmailFromNotification.mockResolvedValue(userEmail);
+
+    await adapter.send(mockNotification, context);
+
+    expect(mockTransporter.sendMail).toHaveBeenCalledWith({
+      to: userEmail,
+      subject: renderedTemplate.subject,
+      html: renderedTemplate.body,
+    });
   });
 });

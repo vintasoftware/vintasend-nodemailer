@@ -48,6 +48,12 @@ describe('NodemailerNotificationAdapter - One-Off Notifications', () => {
     getOneOffNotification: jest.fn(),
     getAllOneOffNotifications: jest.fn(),
     getOneOffNotifications: jest.fn(),
+    getAttachmentFile: jest.fn(),
+    deleteAttachmentFile: jest.fn(),
+    getOrphanedAttachmentFiles: jest.fn(),
+    getAttachments: jest.fn(),
+    deleteNotificationAttachment: jest.fn(),
+    findAttachmentFileByChecksum: jest.fn(),
   };
 
   // biome-ignore lint/suspicious/noExplicitAny: <explanation>
