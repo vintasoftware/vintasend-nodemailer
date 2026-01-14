@@ -18,10 +18,10 @@ describe('NodemailerNotificationAdapter - One-Off Notifications', () => {
 
   const mockTemplateRenderer = {
     render: jest.fn(),
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    // biome-ignore lint/suspicious/noExplicitAny: any just for testing
   } as jest.Mocked<BaseEmailTemplateRenderer<any>>;
 
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: any just for testing
   const mockBackend: jest.Mocked<BaseNotificationBackend<any>> = {
     persistNotification: jest.fn(),
     persistNotificationUpdate: jest.fn(),
@@ -48,13 +48,19 @@ describe('NodemailerNotificationAdapter - One-Off Notifications', () => {
     getOneOffNotification: jest.fn(),
     getAllOneOffNotifications: jest.fn(),
     getOneOffNotifications: jest.fn(),
+    getAttachmentFile: jest.fn(),
+    deleteAttachmentFile: jest.fn(),
+    getOrphanedAttachmentFiles: jest.fn(),
+    getAttachments: jest.fn(),
+    deleteNotificationAttachment: jest.fn(),
+    findAttachmentFileByChecksum: jest.fn(),
   };
 
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: any just for testing
   let mockOneOffNotification: DatabaseOneOffNotification<any>;
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: any just for testing
   let mockRegularNotification: DatabaseNotification<any>;
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: any just for testing
   let adapter: NodemailerNotificationAdapter<typeof mockTemplateRenderer, any>;
 
   beforeEach(() => {
@@ -177,7 +183,7 @@ describe('NodemailerNotificationAdapter - One-Off Notifications', () => {
       const notificationWithoutId = {
         ...mockOneOffNotification,
         id: null,
-        // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+        // biome-ignore lint/suspicious/noExplicitAny: any just for testing
       } as any;
 
       await expect(adapter.send(notificationWithoutId, {})).rejects.toThrow(
