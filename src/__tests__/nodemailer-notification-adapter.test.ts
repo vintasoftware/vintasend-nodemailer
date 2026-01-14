@@ -14,10 +14,10 @@ describe('NodemailerNotificationAdapter', () => {
 
   const mockTemplateRenderer = {
     render: jest.fn(),
-    // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+    // biome-ignore lint/suspicious/noExplicitAny: any just for testing
   } as jest.Mocked<BaseEmailTemplateRenderer<any>>;
 
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: any just for testing
   const mockBackend: jest.Mocked<BaseNotificationBackend<any>> = {
     persistNotification: jest.fn(),
     persistNotificationUpdate: jest.fn(),
@@ -52,7 +52,7 @@ describe('NodemailerNotificationAdapter', () => {
     findAttachmentFileByChecksum: jest.fn(),
   };
 
-  // biome-ignore lint/suspicious/noExplicitAny: <explanation>
+  // biome-ignore lint/suspicious/noExplicitAny: any just for testing
   let mockNotification: DatabaseNotification<any>;
 
   beforeEach(() => {
