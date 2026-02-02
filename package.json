@@ -1,6 +1,6 @@
 {
   "name": "vintasend-nodemailer",
-  "version": "0.4.3",
+  "version": "0.4.7",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -14,14 +14,14 @@
   "author": "Hugo Bessa",
   "license": "MIT",
   "dependencies": {
-    "nodemailer": "^6.10.0",
-    "vintasend": "^0.4.3"
+    "nodemailer": "^7.0.13",
+    "vintasend": "^0.4.7"
   },
   "devDependencies": {
-    "@types/jest": "^29.5.14",
-    "@types/nodemailer": "^6.4.17",
-    "jest": "^29.7.0",
-    "ts-jest": "^29.2.6",
-    "typescript": "^5.8.2"
+    "@types/jest": "^30.0.0",
+    "@types/nodemailer": "^7.0.9",
+    "jest": "^30.2.0",
+    "ts-jest": "^29.4.6",
+    "typescript": "^5.9.3"
   }
 }
