@@ -4,7 +4,7 @@ import type { BaseNotificationBackend } from 'vintasend/dist/services/notificati
 import type { BaseEmailTemplateRenderer } from 'vintasend/dist/services/notification-template-renderers/base-email-template-renderer';
 import type { DatabaseNotification } from 'vintasend/dist/types/notification';
 import type { StoredAttachment, AttachmentFile } from 'vintasend/dist/types/attachment';
-import { NodemailerNotificationAdapter, NodemailerNotificationAdapterFactory } from '../index';
+import { NodemailerNotificationAdapterFactory } from '../index';
 
 jest.mock('nodemailer');
 
