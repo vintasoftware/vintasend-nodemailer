@@ -122,7 +122,7 @@ describe('NodemailerNotificationAdapter - Attachments', () => {
       description: 'Test file',
       file: mockFile,
       createdAt: new Date(),
-      storageMetadata: {},
+      storageMetadata: { id: 'storage-1' },
     };
 
     mockNotification.attachments = [attachment];
@@ -193,7 +193,7 @@ describe('NodemailerNotificationAdapter - Attachments', () => {
       description: 'PDF document',
       file: mockFile1,
       createdAt: new Date(),
-      storageMetadata: {},
+      storageMetadata: { id: 'storage-1' },
     };
 
     const attachment2: StoredAttachment = {
@@ -206,7 +206,7 @@ describe('NodemailerNotificationAdapter - Attachments', () => {
       description: 'Image file',
       file: mockFile2,
       createdAt: new Date(),
-      storageMetadata: {},
+      storageMetadata: { id: 'storage-2' },
     };
 
     mockNotification.attachments = [attachment1, attachment2];
