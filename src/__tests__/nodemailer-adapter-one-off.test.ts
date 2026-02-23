@@ -37,7 +37,7 @@ describe('NodemailerNotificationAdapter - One-Off Notifications', () => {
     cancelNotification: jest.fn(),
     markAsSent: jest.fn(),
     markAsFailed: jest.fn(),
-    storeContextUsed: jest.fn(),
+    storeAdapterAndContextUsed: jest.fn(),
     getUserEmailFromNotification: jest.fn(),
     filterInAppUnreadNotifications: jest.fn(),
     bulkPersistNotifications: jest.fn(),
@@ -54,6 +54,7 @@ describe('NodemailerNotificationAdapter - One-Off Notifications', () => {
     getAttachments: jest.fn(),
     deleteNotificationAttachment: jest.fn(),
     findAttachmentFileByChecksum: jest.fn(),
+    filterNotifications: jest.fn(),
   };
 
   // biome-ignore lint/suspicious/noExplicitAny: any just for testing
