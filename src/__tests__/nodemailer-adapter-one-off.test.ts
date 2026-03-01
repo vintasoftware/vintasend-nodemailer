@@ -6,56 +6,57 @@ import type {
   DatabaseNotification,
   DatabaseOneOffNotification,
 } from 'vintasend/dist/types/notification';
+import { vi, type Mocked } from 'vitest';
 import type { NodemailerNotificationAdapter } from '../index';
 import { NodemailerNotificationAdapterFactory } from '../index';
 
-jest.mock('nodemailer');
+vi.mock('nodemailer');
 
 describe('NodemailerNotificationAdapter - One-Off Notifications', () => {
   const mockTransporter = {
-    sendMail: jest.fn(),
+    sendMail: vi.fn(),
   };
 
   const mockTemplateRenderer = {
-    render: jest.fn(),
-    renderFromTemplateContent: jest.fn(),
+    render: vi.fn(),
+    renderFromTemplateContent: vi.fn(),
     // biome-ignore lint/suspicious/noExplicitAny: any just for testing
-  } as jest.Mocked<BaseEmailTemplateRenderer<any>>;
+  } as Mocked<BaseEmailTemplateRenderer<any>>;
 
   // biome-ignore lint/suspicious/noExplicitAny: any just for testing
-  const mockBackend: jest.Mocked<BaseNotificationBackend<any>> = {
-    persistNotification: jest.fn(),
-    persistNotificationUpdate: jest.fn(),
-    getAllFutureNotifications: jest.fn(),
-    getAllFutureNotificationsFromUser: jest.fn(),
-    getFutureNotificationsFromUser: jest.fn(),
-    getFutureNotifications: jest.fn(),
-    getAllPendingNotifications: jest.fn(),
-    getPendingNotifications: jest.fn(),
-    getNotification: jest.fn(),
-    markAsRead: jest.fn(),
-    filterAllInAppUnreadNotifications: jest.fn(),
-    cancelNotification: jest.fn(),
-    markAsSent: jest.fn(),
-    markAsFailed: jest.fn(),
-    storeAdapterAndContextUsed: jest.fn(),
-    getUserEmailFromNotification: jest.fn(),
-    filterInAppUnreadNotifications: jest.fn(),
-    bulkPersistNotifications: jest.fn(),
-    getAllNotifications: jest.fn(),
-    getNotifications: jest.fn(),
-    persistOneOffNotification: jest.fn(),
-    persistOneOffNotificationUpdate: jest.fn(),
-    getOneOffNotification: jest.fn(),
-    getAllOneOffNotifications: jest.fn(),
-    getOneOffNotifications: jest.fn(),
-    getAttachmentFile: jest.fn(),
-    deleteAttachmentFile: jest.fn(),
-    getOrphanedAttachmentFiles: jest.fn(),
-    getAttachments: jest.fn(),
-    deleteNotificationAttachment: jest.fn(),
-    findAttachmentFileByChecksum: jest.fn(),
-    filterNotifications: jest.fn(),
+  const mockBackend: Mocked<BaseNotificationBackend<any>> = {
+    persistNotification: vi.fn(),
+    persistNotificationUpdate: vi.fn(),
+    getAllFutureNotifications: vi.fn(),
+    getAllFutureNotificationsFromUser: vi.fn(),
+    getFutureNotificationsFromUser: vi.fn(),
+    getFutureNotifications: vi.fn(),
+    getAllPendingNotifications: vi.fn(),
+    getPendingNotifications: vi.fn(),
+    getNotification: vi.fn(),
+    markAsRead: vi.fn(),
+    filterAllInAppUnreadNotifications: vi.fn(),
+    cancelNotification: vi.fn(),
+    markAsSent: vi.fn(),
+    markAsFailed: vi.fn(),
+    storeAdapterAndContextUsed: vi.fn(),
+    getUserEmailFromNotification: vi.fn(),
+    filterInAppUnreadNotifications: vi.fn(),
+    bulkPersistNotifications: vi.fn(),
+    getAllNotifications: vi.fn(),
+    getNotifications: vi.fn(),
+    persistOneOffNotification: vi.fn(),
+    persistOneOffNotificationUpdate: vi.fn(),
+    getOneOffNotification: vi.fn(),
+    getAllOneOffNotifications: vi.fn(),
+    getOneOffNotifications: vi.fn(),
+    getAttachmentFile: vi.fn(),
+    deleteAttachmentFile: vi.fn(),
+    getOrphanedAttachmentFiles: vi.fn(),
+    getAttachments: vi.fn(),
+    deleteNotificationAttachment: vi.fn(),
+    findAttachmentFileByChecksum: vi.fn(),
+    filterNotifications: vi.fn(),
   };
 
   // biome-ignore lint/suspicious/noExplicitAny: any just for testing
@@ -66,8 +67,8 @@ describe('NodemailerNotificationAdapter - One-Off Notifications', () => {
   let adapter: NodemailerNotificationAdapter<typeof mockTemplateRenderer, any>;
 
   beforeEach(() => {
-    jest.clearAllMocks();
-    (nodemailer.createTransport as jest.Mock).mockReturnValue(mockTransporter);
+    vi.clearAllMocks();
+    vi.mocked(nodemailer.createTransport).mockReturnValue(mockTransporter as any);
 
     // Reset the sendMail mock to resolve successfully by default
     mockTransporter.sendMail.mockResolvedValue({
@@ -247,7 +248,7 @@ describe('NodemailerNotificationAdapter - One-Off Notifications', () => {
         html: '<p>Test Body</p>',
       });
 
-      jest.clearAllMocks();
+      vi.clearAllMocks();
       mockTemplateRenderer.render.mockResolvedValue({
         subject: 'Test Subject 2',
         body: '<p>Test Body 2</p>',
