@@ -1,12 +1,13 @@
 import nodemailer from 'nodemailer';
 import type Mail from 'nodemailer/lib/mailer';
-
-import { BaseNotificationAdapter } from 'vintasend/dist/services/notification-adapters/base-notification-adapter';
-import type { BaseEmailTemplateRenderer } from 'vintasend/dist/services/notification-template-renderers/base-email-template-renderer';
-import type { JsonObject } from 'vintasend/dist/types/json-values';
-import type { AnyDatabaseNotification } from 'vintasend/dist/types/notification';
-import type { BaseNotificationTypeConfig } from 'vintasend/dist/types/notification-type-config';
-import type { StoredAttachment } from 'vintasend/dist/types/attachment';
+import type {
+  AnyDatabaseNotification,
+  BaseEmailTemplateRenderer,
+  BaseNotificationTypeConfig,
+  JsonObject,
+  StoredAttachment,
+} from 'vintasend';
+import { BaseNotificationAdapter } from 'vintasend';
 
 export class NodemailerNotificationAdapter<
   TemplateRenderer extends BaseEmailTemplateRenderer<Config>,
@@ -56,15 +57,13 @@ export class NodemailerNotificationAdapter<
     await this.transporter.sendMail(mailOptions);
   }
 
-  protected async prepareAttachments(
-    attachments: StoredAttachment[],
-  ): Promise<Mail.Attachment[]> {
+  protected async prepareAttachments(attachments: StoredAttachment[]): Promise<Mail.Attachment[]> {
     return Promise.all(
       attachments.map(async (att) => ({
         filename: att.filename,
         content: await att.file.read(),
         contentType: att.contentType,
-      }))
+      })),
     );
   }
 }

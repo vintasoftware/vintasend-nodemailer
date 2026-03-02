@@ -1,9 +1,11 @@
 import nodemailer from 'nodemailer';
 import type SMTPTransport from 'nodemailer/lib/smtp-transport';
-import type { BaseNotificationBackend } from 'vintasend/dist/services/notification-backends/base-notification-backend';
-import type { BaseEmailTemplateRenderer } from 'vintasend/dist/services/notification-template-renderers/base-email-template-renderer';
-import type { DatabaseNotification } from 'vintasend/dist/types/notification';
-import { vi, type Mocked } from 'vitest';
+import type {
+  BaseEmailTemplateRenderer,
+  BaseNotificationBackend,
+  DatabaseNotification,
+} from 'vintasend';
+import { type Mocked, vi } from 'vitest';
 import { NodemailerNotificationAdapterFactory } from '../index';
 
 vi.mock('nodemailer');
@@ -16,10 +18,8 @@ describe('NodemailerNotificationAdapter', () => {
   const mockTemplateRenderer = {
     render: vi.fn(),
     renderFromTemplateContent: vi.fn(),
-    // biome-ignore lint/suspicious/noExplicitAny: any just for testing
   } as Mocked<BaseEmailTemplateRenderer<any>>;
 
-  // biome-ignore lint/suspicious/noExplicitAny: any just for testing
   const mockBackend: Mocked<BaseNotificationBackend<any>> = {
     persistNotification: vi.fn(),
     persistNotificationUpdate: vi.fn(),
@@ -55,7 +55,6 @@ describe('NodemailerNotificationAdapter', () => {
     filterNotifications: vi.fn(),
   };
 
-  // biome-ignore lint/suspicious/noExplicitAny: any just for testing
   let mockNotification: DatabaseNotification<any>;
 
   beforeEach(() => {

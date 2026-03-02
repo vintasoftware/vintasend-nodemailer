@@ -1,11 +1,14 @@
 {
   "name": "vintasend-nodemailer",
-  "version": "0.10.0",
+  "version": "0.11.0",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "npm run build",
+    "prepare": "husky",
+    "lint": "biome check .",
+    "format": "biome check --write .",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage"
@@ -17,11 +20,13 @@
   "license": "MIT",
   "dependencies": {
     "nodemailer": "^8.0.1",
-    "vintasend": "^0.10.0"
+    "vintasend": "^0.11.0"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.4.5",
     "@types/nodemailer": "^7.0.9",
     "@vitest/coverage-v8": "4.0.18",
+    "husky": "^9.1.7",
     "typescript": "^5.9.3",
     "vitest": "4.0.18"
   }
