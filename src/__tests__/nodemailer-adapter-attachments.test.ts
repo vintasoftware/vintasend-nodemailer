@@ -7,7 +7,7 @@ import type {
   DatabaseNotification,
   StoredAttachment,
 } from 'vintasend';
-import { type Mocked, vi } from 'vitest';
+import { beforeEach, describe, expect, it, type Mocked, vi } from 'vitest';
 import { NodemailerNotificationAdapterFactory } from '../index';
 
 vi.mock('nodemailer');

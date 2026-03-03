@@ -6,7 +6,7 @@ import type {
   DatabaseNotification,
   DatabaseOneOffNotification,
 } from 'vintasend';
-import { type Mocked, vi } from 'vitest';
+import { beforeEach, describe, expect, it, type Mocked, vi } from 'vitest';
 import type { NodemailerNotificationAdapter } from '../index';
 import { NodemailerNotificationAdapterFactory } from '../index';
 
