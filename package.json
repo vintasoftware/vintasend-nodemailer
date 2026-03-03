@@ -1,6 +1,6 @@
 {
   "name": "vintasend-nodemailer",
-  "version": "0.11.2-alpha2",
+  "version": "0.11.2-alpha3",
   "description": "",
   "main": "dist/index.js",
   "scripts": {
@@ -20,7 +20,7 @@
   "license": "MIT",
   "dependencies": {
     "nodemailer": "^8.0.1",
-    "vintasend": "^0.11.2-alpha2"
+    "vintasend": "^0.11.2-alpha3"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.5",
