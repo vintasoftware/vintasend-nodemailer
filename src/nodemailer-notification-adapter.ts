@@ -1,5 +1,4 @@
 import nodemailer from 'nodemailer';
-import type Mail from 'nodemailer/lib/mailer';
 import type {
   AnyDatabaseNotification,
   BaseEmailTemplateRenderer,
@@ -57,7 +56,9 @@ export class NodemailerNotificationAdapter<
     await this.transporter.sendMail(mailOptions);
   }
 
-  protected async prepareAttachments(attachments: StoredAttachment[]): Promise<Mail.Attachment[]> {
+  protected async prepareAttachments(
+    attachments: StoredAttachment[],
+  ): Promise<NonNullable<nodemailer.SendMailOptions['attachments']>> {
     return Promise.all(
       attachments.map(async (att) => ({
         filename: att.filename,
