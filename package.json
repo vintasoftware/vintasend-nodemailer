@@ -1,6 +1,6 @@
 {
   "name": "vintasend-nodemailer",
-  "version": "1.0.0-alpha5",
+  "version": "1.0.0-alpha6",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/vintasoftware/vintasend-nodemailer.git"
@@ -25,7 +25,7 @@
   "license": "MIT",
   "dependencies": {
     "nodemailer": "^8.0.1",
-    "vintasend": "^1.0.0-alpha5"
+    "vintasend": "^1.0.0-alpha6"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.5.10",
