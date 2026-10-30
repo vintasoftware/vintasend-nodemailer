@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+import nodemailer, { type SendMailOptions, type Transporter } from 'nodemailer';
 import type {
   AnyDatabaseNotification,
   BaseEmailTemplateRenderer,
@@ -14,7 +14,7 @@ export class NodemailerNotificationAdapter<
   Config extends BaseNotificationTypeConfig,
 > extends BaseNotificationAdapter<TemplateRenderer, Config> {
   public key: string | null = 'nodemailer';
-  private transporter: nodemailer.Transporter;
+  private transporter: Transporter;
 
   constructor(
     templateRenderer: TemplateRenderer,
@@ -50,7 +50,7 @@ export class NodemailerNotificationAdapter<
     // Use the helper method to get recipient email (handles both regular and one-off notifications)
     const recipientEmail = await this.getRecipientEmail(notification);
 
-    const mailOptions: nodemailer.SendMailOptions = {
+    const mailOptions: SendMailOptions = {
       to: recipientEmail,
       subject: template.subject,
       html: template.body,
@@ -68,7 +68,7 @@ export class NodemailerNotificationAdapter<
 
   protected async prepareAttachments(
     attachments: StoredAttachment[],
-  ): Promise<NonNullable<nodemailer.SendMailOptions['attachments']>> {
+  ): Promise<NonNullable<SendMailOptions['attachments']>> {
     return Promise.all(
       attachments.map(async (att) => ({
         filename: att.filename,

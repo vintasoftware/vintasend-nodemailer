@@ -24,15 +24,14 @@
   "author": "Hugo Bessa",
   "license": "MIT",
   "dependencies": {
-    "nodemailer": "^8.0.1",
+    "nodemailer": "^10.3.1",
     "vintasend": "^1.0.0-alpha7"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.5.10",
-    "@types/nodemailer": "^7.0.9",
-    "@vitest/coverage-v8": "4.0.18",
+    "@biomejs/biome": "^2.6.4",
+    "@vitest/coverage-v8": "5.0.5",
     "husky": "^9.1.7",
-    "typescript": "^5.9.3",
-    "vitest": "4.0.18"
+    "typescript": "^7.0.2",
+    "vitest": "5.0.5"
   }
 }
